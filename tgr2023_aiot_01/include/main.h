@@ -3,6 +3,7 @@
 
 // include files
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <Esp.h>
 #include <esp_log.h>
 
@@ -10,4 +11,4 @@
 
 // public function prototypes
 
-#endif  // __MAIN_H__
+#endif 
