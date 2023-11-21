@@ -14,12 +14,12 @@ static void task_period_fcn(void* arg);
 void task_period_init(uint32_t period_ms) {
     static uint32_t arg = period_ms;
     xTaskCreate(
-        ,    /* Task function. */
-        ,    /* String with name of task. */
-        ,               /* Stack size in bytes. */
-        ,               /* Parameter passed as input of the task */
-        ,   /* Priority of the task. */
-        );              /* Task handle. */
+        task_period_fcn,    /* Task function. */
+        "Periodic Task",    /* String with name of task. */
+        2048,               /* Stack size in bytes. */
+        &arg,               /* Parameter passed as input of the task */
+        TASK_PERIOD_PRIO,   /* Priority of the task. */
+        NULL);              /* Task handle. */
     ESP_LOGI(TAG, "task_period created at %d", millis());
 }
 
@@ -36,7 +36,7 @@ void task_period_fcn(void* arg) {
             .value = esp_random()
         };
         ESP_LOGI(TAG, "task_period run at %d", millis());
-        // send event and delay
-        
+        xQueueSend(evt_queue, &evt_msg, portMAX_DELAY);
+        vTaskDelay(period_ms / portTICK_PERIOD_MS);
     }
 }

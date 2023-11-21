@@ -12,14 +12,13 @@ static void task_button_fcn(void* arg);
 
 // task initialization
 void task_button_init() {
-    // fill task parameters
     xTaskCreate(
-        ,    /* Task function. */
-        ,      /* String with name of task. */
-        ,               /* Stack size in bytes. */
-        ,               /* Parameter passed as input of the task */
-        ,   /* Priority of the task. */
-        );              /* Task handle. */
+        task_button_fcn,    /* Task function. */
+        "Button Task",      /* String with name of task. */
+        2048,               /* Stack size in bytes. */
+        NULL,               /* Parameter passed as input of the task */
+        TASK_BUTTON_PRIO,   /* Priority of the task. */
+        NULL);              /* Task handle. */
     ESP_LOGI(TAG, "task_button created at %d", millis());
 }
 
@@ -41,8 +40,8 @@ void task_button_fcn(void* arg) {
                 ESP_LOGI(TAG, "Button pressed at %d", millis());
                 if (millis() - prev_millis > 500) {
                     prev_millis = millis();
-                    // generate and send event
-
+                    evt_msg.pressed = true;
+                    xQueueSend(evt_queue, &evt_msg, portMAX_DELAY);
                 }
             }
         }

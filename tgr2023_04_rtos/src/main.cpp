@@ -24,10 +24,10 @@ QueueHandle_t evt_queue;
 void setup() {
   Serial.begin(115200);
   print_memory();
-  // create event queue
-
-  // create tasks
-
+  evt_queue = xQueueCreate(3, sizeof(evt_msg_t));
+  task_button_init();
+  task_period_init(2000);
+  task_mqtt_init(mqtt_callback);
 }
 
 // Main loop

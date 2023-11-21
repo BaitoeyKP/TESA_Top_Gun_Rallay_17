@@ -5,6 +5,7 @@
 // constants
 #define TAG             "task_mqtt"
 
+
 // static variables
 StaticJsonDocument<128> evt_doc;
 
@@ -16,12 +17,12 @@ static void task_mqtt_fcn(void* arg);
 // task initialization
 void task_mqtt_init(mqtt_callback_t mqtt_callback) {
     xTaskCreate(
-        ,          /* Task function. */
-        ,            /* String with name of task. */
-        ,                   /* Stack size in bytes. */
-        ,   /* Parameter passed as input of the task */
-        ,         /* Priority of the task. */
-        );                  /* Task handle. */
+        task_mqtt_fcn,          /* Task function. */
+        "MQTT Task",            /* String with name of task. */
+        4096,                   /* Stack size in bytes. */
+        (void*)mqtt_callback,   /* Parameter passed as input of the task */
+        TASK_MQTT_PRIO,         /* Priority of the task. */
+        NULL);                  /* Task handle. */
     ESP_LOGI(TAG, "task_mqtt created at %d", millis());
 }
 
@@ -33,8 +34,7 @@ void task_mqtt_fcn(void* arg) {
     while(1) {
         static evt_msg_t evt_msg;
         // task function
-        // wait for event
-
+        xQueueReceive(evt_queue, &evt_msg, portMAX_DELAY);
         ESP_LOGI(TAG, "task_mqtt run at %d", millis());
         evt_doc.clear();
         switch(evt_msg.type) {

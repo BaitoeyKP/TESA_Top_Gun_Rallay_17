@@ -16,11 +16,11 @@
 #define TASK_BUTTON_TYPE        0
 #define TASK_PERIOD_TYPE        1
 
-#define WIFI_SSID       "Vsupacha_2.4G"
-#define WIFI_PASSWORD   "nokandbee"
-#define MQTT_DEV_ID     1234
-#define MQTT_EVT_TOPIC  "tgr2023/team/evt"
-#define MQTT_CMD_TOPIC  "tgr2023/team/cmd"
+#define WIFI_SSID       "B"
+#define WIFI_PASSWORD   "0123456789"
+#define MQTT_DEV_ID     220
+#define MQTT_EVT_TOPIC  "tgr2023/Luvinas0/evt"
+#define MQTT_CMD_TOPIC  "tgr2023/Luvinas0/cmd"
 
 // type definitions
 typedef struct evt_msg_t {
