@@ -13,4 +13,4 @@
 // public function prototypes
 void task_mqtt_init(mqtt_callback_t mqtt_callback);
 
-#endif  // __TASK_MQTT_H__
+#endif // __TASK_MQTT_H__
