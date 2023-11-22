@@ -86,7 +86,7 @@ class EspCamWidget(QtWidgets.QWidget):
         print(result)
         if result is not None:
             jpg_sz = int.from_bytes(result.tobytes(), "little")
-            print("Image size: ", jpg_sz);
+            print("Image size: ", jpg_sz)
             self.buf = bytearray(b'\x00'*jpg_sz)
             result = self.rpc_master.call("jpeg_image_read", recv_timeout=1000)
             self.rpc_master.get_bytes(self.buf, jpg_sz)

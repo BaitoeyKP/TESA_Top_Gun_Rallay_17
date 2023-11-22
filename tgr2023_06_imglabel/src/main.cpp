@@ -3,12 +3,12 @@
 #include "openmvrpc.h"
 
 // constants
-#define TAG           "main"
+#define TAG "main"
 
-#define BUTTON_PIN    0
+#define BUTTON_PIN 0
 
 // static variables
-static uint8_t jpg_buf[20480];
+static uint8_t jpg_buf[20480]; // 20k Byte
 static uint16_t jpg_sz = 0;
 static bool read_flag = false;
 
@@ -24,7 +24,8 @@ size_t jpeg_image_snapshot_callback(void *out_data);
 size_t jpeg_image_read_callback(void *out_data);
 
 // initialize hardware
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   hw_camera_init();
   rpc_slave.register_callback(F("button_read"), button_read_callback);
@@ -35,17 +36,20 @@ void setup() {
 }
 
 // main loop
-void loop() {
-  if (read_flag) {
+void loop()
+{
+  if (read_flag)
+  {
     // send image data
-
+    rpc_slave.put_bytes(jpg_buf, jpg_sz, 20000); // send pic (pic , size, time)
     read_flag = false;
   }
   rpc_slave.loop();
 }
 
 // Print memory information
-void print_memory() {
+void print_memory()
+{
   ESP_LOGI(TAG, "Total heap: %u", ESP.getHeapSize());
   ESP_LOGI(TAG, "Free heap: %u", ESP.getFreeHeap());
   ESP_LOGI(TAG, "Total PSRAM: %u", ESP.getPsramSize());
@@ -53,24 +57,29 @@ void print_memory() {
 }
 
 // callback for digital_read
-size_t button_read_callback(void *out_data) {
+size_t button_read_callback(void *out_data) // ส่งข้อมูลของ pointer ที่ตอบกลับ
+{
   uint8_t state = 1;
-
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
   // read button state
-
-  memcpy(out_data, &state, sizeof(state));
+  state = !digitalRead(BUTTON_PIN);
+  memcpy(out_data, &state, sizeof(state)); // ส่งข้อมูลกลับ (size)
+  memcpy(out_data, &jpg_sz, sizeof(jpg_sz));
   return sizeof(state);
 }
 
 // take camera snapshot
-size_t jpeg_image_snapshot_callback(void *out_data) {
+size_t jpeg_image_snapshot_callback(void *out_data)
+{
   // take camera snapshot
-
+  jpg_sz = hw_camera_jpg_snapshot(jpg_buf);
+  memcpy(out_data, &jpg_sz, sizeof(jpg_sz));
   return sizeof(jpg_sz);
 }
 
 // start reading image
-size_t jpeg_image_read_callback(void *out_data) {
+size_t jpeg_image_read_callback(void *out_data)
+{
   read_flag = true;
   return 0;
 }
