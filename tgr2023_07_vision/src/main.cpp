@@ -1,7 +1,8 @@
 #include "main.h"
 #include "hw_camera.h"
 // add header file of Edge Impulse firmware
-#include <TGR2023_Practice_inferencing.h>
+
+#include <Problem_inferencing.h>
 #include "edge-impulse-sdk/dsp/image/image.hpp"
 
 // constants
@@ -17,11 +18,18 @@
 // static variables
 static uint8_t *bmp_buf;
 
+// static int save_ = 0;
+// unsigned int y1 = 0;
+// unsigned int y2 = 0;
+// static unsigned int ubu = 0;
+// static unsigned int spon = 0;
+// static char gg[10];
+
 // static function prototypes
 void print_memory(void);
 void ei_prepare_feature(uint8_t *img_buf, signal_t *signal);
 int ei_get_feature_callback(size_t offset, size_t length, float *out_ptr);
-void ei_use_result(ei_impulse_result_t result);
+int ei_use_result(ei_impulse_result_t result);
 
 // initialize hardware
 void setup()
@@ -60,7 +68,7 @@ void loop()
       ESP_LOGI(TAG, "Taking snapshot...");
       // use raw bmp image
       hw_camera_raw_snapshot(bmp_buf, &width, &height);
-      // จับเวลา
+
       elapsed_time = millis() - Tstart;
       ESP_LOGI(TAG, "Snapshot taken (%d) width: %d, height: %d", elapsed_time, width, height);
       print_memory();
@@ -81,8 +89,13 @@ void loop()
       elapsed_time = millis() - Tstart;
       ESP_LOGI(TAG, "Classification done (%d)", elapsed_time);
       print_memory();
-      // use result
       ei_use_result(result);
+      // use result
+      // if (ei_use_result(result) == 1)
+      // {
+      //   save_ += 1;
+      // }
+
       press_state = true;
     }
   }
@@ -93,6 +106,22 @@ void loop()
       press_state = false;
     }
   }
+
+  // if (save_ == 2)
+  // {
+  //   if (ubu > spon && (!(ubu != 555 && spon == 555) && !(ubu == 555 && spon != 555) && !(ubu == 555 && spon == 555)))
+  //   {
+  //     ESP_LOGI(TAG, "S อยู่ข้างบน U");
+  //   }
+  //   else if (spon > ubu && (!(ubu != 555 && spon == 555) && !(ubu == 555 && spon != 555) && !(ubu == 555 && spon == 555)))
+  //   {
+  //     ESP_LOGI(TAG, "U อยู่ข้างบน S");
+  //   }
+  //   ubu = 555;
+  //   spon = 555;
+  //   save_ = 0;
+  // }
+
   delay(100);
 }
 
@@ -142,7 +171,7 @@ int ei_get_feature_callback(size_t offset, size_t length, float *out_ptr)
 }
 
 // use result from classifier
-void ei_use_result(ei_impulse_result_t result)
+int ei_use_result(ei_impulse_result_t result)
 {
   ESP_LOGI(TAG, "Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.)",
            result.timing.dsp, result.timing.classification, result.timing.anomaly);
@@ -155,9 +184,22 @@ void ei_use_result(ei_impulse_result_t result)
       continue;
     }
     ESP_LOGI(TAG, "%s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
+
+    // printf("1: %u", bb.y);
+
+    // if (bb.label == "ubu")
+    // {
+    //   ubu = bb.y;
+    // }
+    // if (bb.label == "spon")
+    // {
+    //   spon = bb.y;
+    // }
   }
   if (!bb_found)
   {
     ESP_LOGI(TAG, "No objects found");
+    return 0;
   }
+  return 1;
 }
