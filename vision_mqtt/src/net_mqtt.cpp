@@ -8,7 +8,7 @@
 #define MQTT_USER "TGR_GROUP22"
 #define MQTT_PW "BV593V"
 
-IPAddress subnet(255, 255, 0, 0);
+IPAddress subnet(255, 255, 255, 0);
 IPAddress local_IP(192, 168, 1, 73);
 IPAddress gateway(192, 168, 1, 2);
 
@@ -26,16 +26,16 @@ void net_mqtt_init(char *ssid, char *passwd)
     }
 
     WiFi.disconnect(true);
-    WiFi.mode(WIFI_AP);
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, passwd);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(10);
-        Serial.println("Connecting to WiFi...");
-        // ESP_LOGI(TAG, "Connecting to WiFi...");
+        // Serial.println("Connecting to WiFi...");
+        ESP_LOGI(TAG, "Connecting to WiFi...");
     }
-    Serial.println("Connected to wifi");
-    // ESP_LOGI(TAG, "Connected to %s", ssid);
+    // Serial.println("Connected to wifi");
+    ESP_LOGI(TAG, "Connected to wifi");
 
     // initialize MQTT
     mqtt_client.setServer(MQTT_BROKER, MQTT_PORT);
@@ -52,7 +52,8 @@ void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_call
     {
         if (mqtt_client.connect(client_id.c_str(), MQTT_USER, MQTT_PW))
         {
-            Serial.println("Public EMQX MQTT broker connected");
+            // Serial.println("Public EMQX MQTT broker connected");
+            ESP_LOGI(TAG, "Public EMQX MQTT broker connected");
             mqtt_client.subscribe(topic);
         }
         else
@@ -63,6 +64,8 @@ void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_call
         }
     }
     // Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
+    ESP_LOGI(TAG, "connect to mqtt broker");
+
     // mqtt_client.connect(client_id.c_str());
     // mqtt_client.subscribe(topic);
 }

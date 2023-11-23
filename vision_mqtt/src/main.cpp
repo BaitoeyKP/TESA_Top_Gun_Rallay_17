@@ -12,7 +12,7 @@
 #define BTN_PIN 0
 #define WIFI_SSID "TGR17_2.4G"
 #define WIFI_PASSWORD NULL
-#define MQTT_EVT_TOPIC "TGR_22/water"
+#define MQTT_EVT_TOPIC "TGR_22/water_level"
 #define MQTT_CMD_TOPIC "TGR_22/#"
 #define MQTT_DEV_ID 22
 
@@ -66,7 +66,7 @@ void loop()
 {
   static bool press_state = false;
   static uint32_t prev_millis = 0;
-  // mqtt_client.loop();
+
   if (digitalRead(BTN_PIN) == 0)
   {
     if ((millis() - prev_millis > 500) && (press_state == false))
@@ -76,6 +76,7 @@ void loop()
   }
   if (capture)
   {
+    net_mqtt_publish(MQTT_EVT_TOPIC, "captured");
     uint32_t Tstart, elapsed_time;
     uint32_t width, height;
 
@@ -110,13 +111,13 @@ void loop()
     press_state = true;
     capture = false;
   }
-  else
-  {
-    if (press_state)
-    {
-      press_state = false;
-    }
-  }
+  // else
+  // {
+  //   if (press_state)
+  //   {
+  //     press_state = false;
+  //   }
+  // }
   net_mqtt_loop();
   delay(100);
 }
@@ -188,6 +189,8 @@ int ei_use_result(ei_impulse_result_t result)
   if (!bb_found)
   {
     ESP_LOGI(TAG, "not valid");
+    net_mqtt_publish(MQTT_EVT_TOPIC, "not found");
+
     return 0;
   }
   return 1;
@@ -207,22 +210,22 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
   {
     capture = false;
   }
-}
 
-// (char *topic, byte *payload, unsigned int length)
-// {
-//   // extract data from payload
-//   char tmpbuf[128];
-//   memcpy(tmpbuf, payload, length);
-//   tmpbuf[length] = 0;
-//   // check if the message is for this device
-//   deserializeJson(cmd_buf, tmpbuf);
-//   if (strcmp((char *)payload, "get") == 0)
-//   {
-//     capture = true;
-//   }
-//   else
-//   {
-//     capture = false;
-//   }
-// }
+  // (char *topic, byte *payload, unsigned int length)
+  // {
+  // extract data from payload
+  // char tmpbuf[128];
+  // memcpy(tmpbuf, payload, length);
+  // tmpbuf[length] = 0;
+  // // check if the message is for this device
+  // deserializeJson(cmd_buf, tmpbuf);
+  // if (tmpbuf == "get")
+  // {
+  //   capture = true;
+  // }
+  // else
+  // {
+  //   capture = false;
+  // }
+  // }
+}

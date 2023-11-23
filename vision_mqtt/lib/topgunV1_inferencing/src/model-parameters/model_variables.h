@@ -29,7 +29,7 @@
 #include "edge-impulse-sdk/classifier/ei_model_types.h"
 #include "edge-impulse-sdk/classifier/inferencing_engines/engines.h"
 
-const char* ei_classifier_inferencing_categories[] = { "114.05", "114.15", "114.35", "114.55", "114.75" };
+const char* ei_classifier_inferencing_categories[] = { "108.15", "109.40", "110.64", "111.29", "112.77", "113.32", "114.05", "114.15", "114.35", "114.55", "114.56", "114.75", "115.83", "116.00", "117.91", "118.55", "119.88" };
 
 uint8_t ei_dsp_config_3_axes[] = { 0 };
 const uint32_t ei_dsp_config_3_axes_size = 1;
@@ -90,11 +90,11 @@ const ei_model_performance_calibration_t ei_calibration = {
     0   /* Don't use flags */
 };
 
-const ei_impulse_t impulse_313424_3 = {
+const ei_impulse_t impulse_313424_6 = {
     .project_id = 313424,
     .project_owner = "King Mongkut's Institute of Technology Ladkrabang",
     .project_name = "topgunV1",
-    .deploy_version = 3,
+    .deploy_version = 6,
 
     .nn_input_frame_size = 57600,
     .raw_sample_count = 57600,
@@ -114,7 +114,7 @@ const ei_impulse_t impulse_313424_3 = {
     .object_detection_last_layer = EI_CLASSIFIER_LAST_LAYER_FOMO,
     .fomo_output_size = 30,
     
-    .tflite_output_features_count = 5400,
+    .tflite_output_features_count = 16200,
     .learning_blocks_size = ei_learning_blocks_size,
     .learning_blocks = ei_learning_blocks,
 
@@ -126,11 +126,11 @@ const ei_impulse_t impulse_313424_3 = {
     .slices_per_model_window = 4,
 
     .has_anomaly = 0,
-    .label_count = 5,
+    .label_count = 17,
     .calibration = ei_calibration,
     .categories = ei_classifier_inferencing_categories
 };
 
-const ei_impulse_t ei_default_impulse = impulse_313424_3;
+const ei_impulse_t ei_default_impulse = impulse_313424_6;
 
 #endif // _EI_CLASSIFIER_MODEL_METADATA_H_

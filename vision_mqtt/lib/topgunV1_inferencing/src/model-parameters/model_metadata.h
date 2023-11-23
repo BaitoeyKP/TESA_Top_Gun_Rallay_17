@@ -55,7 +55,7 @@
 #define EI_CLASSIFIER_PROJECT_ID                 313424
 #define EI_CLASSIFIER_PROJECT_OWNER              "King Mongkut's Institute of Technology Ladkrabang"
 #define EI_CLASSIFIER_PROJECT_NAME               "topgunV1"
-#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     3
+#define EI_CLASSIFIER_PROJECT_DEPLOY_VERSION     6
 #define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        57600
 #define EI_CLASSIFIER_RAW_SAMPLE_COUNT           57600
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME      1
@@ -63,9 +63,9 @@
 #define EI_CLASSIFIER_INPUT_WIDTH                240
 #define EI_CLASSIFIER_INPUT_HEIGHT               240
 #define EI_CLASSIFIER_INPUT_FRAMES               1
-#define EI_CLASSIFIER_NN_OUTPUT_COUNT            5400
+#define EI_CLASSIFIER_NN_OUTPUT_COUNT            16200
 #define EI_CLASSIFIER_INTERVAL_MS                1
-#define EI_CLASSIFIER_LABEL_COUNT                5
+#define EI_CLASSIFIER_LABEL_COUNT                17
 #define EI_CLASSIFIER_HAS_ANOMALY                0
 #define EI_CLASSIFIER_FREQUENCY                  0
 #define EI_CLASSIFIER_HAS_MODEL_VARIABLES        1
