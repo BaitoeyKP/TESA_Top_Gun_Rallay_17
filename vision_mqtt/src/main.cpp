@@ -9,13 +9,10 @@
 
 // constants
 #define TAG "main"
-
 #define BTN_PIN 0
-
-// #define WIFI_SSID "TGR17_2.4G"
-#define WIFI_SSID "B"
-#define WIFI_PASSWORD "0123456789"
-#define MQTT_EVT_TOPIC "TGR_22/pub"
+#define WIFI_SSID "TGR17_2.4G"
+#define WIFI_PASSWORD NULL
+#define MQTT_EVT_TOPIC "TGR_22/water"
 #define MQTT_CMD_TOPIC "TGR_22/#"
 #define MQTT_DEV_ID 22
 
@@ -32,7 +29,8 @@ StaticJsonDocument<128> cmd_buf;
 StaticJsonDocument<128> evt_buf;
 
 static char buf[128];
-String label;
+int label;
+
 
 // static function prototypes
 void print_memory(void);
@@ -61,6 +59,7 @@ void setup()
   net_mqtt_init(WIFI_SSID, WIFI_PASSWORD);
   // connect to MQTT broker
   net_mqtt_connect(MQTT_DEV_ID, MQTT_CMD_TOPIC, mqtt_callback);
+  Serial.println("start");
 }
 
 // main loop
@@ -178,23 +177,25 @@ int ei_use_result(ei_impulse_result_t result)
     ESP_LOGI(TAG, "%s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
     if (bb.label == "ubu")
     {
-      label = "ubu";
+      label = 1;
     }
     if (bb.label == "spon")
     {
-      label = "spon";
+      label = 2;
     }
   }
   if (!bb_found)
   {
-    label = "not found";
+    label = 0;
     ESP_LOGI(TAG, "No objects found");
     return 0;
   }
   evt_buf["label : "] = label;
   serializeJson(evt_buf, buf);
   net_mqtt_publish(MQTT_EVT_TOPIC, buf);
+  // net_mqtt_publish(MQTT_EVT_TOPIC, label);
   Serial.println(label);
+  // Serial.println(buf);
   return 1;
 }
 
