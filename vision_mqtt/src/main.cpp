@@ -4,7 +4,7 @@
 
 // add header file of Edge Impulse firmware
 
-#include <Problem_inferencing.h>
+#include <topgunV1_inferencing.h>
 #include "edge-impulse-sdk/dsp/image/image.hpp"
 
 // constants
@@ -23,14 +23,13 @@
 
 // static variables
 static uint8_t *bmp_buf;
+static char buf[128];
+int label;
+bool capture = false;
 
 // declare ArduinoJson objects for cmd_buf and evt_buf
 StaticJsonDocument<128> cmd_buf;
 StaticJsonDocument<128> evt_buf;
-
-static char buf[128];
-int label;
-
 
 // static function prototypes
 void print_memory(void);
@@ -72,39 +71,43 @@ void loop()
   {
     if ((millis() - prev_millis > 500) && (press_state == false))
     {
-      uint32_t Tstart, elapsed_time;
-      uint32_t width, height;
-
-      prev_millis = millis();
-      Tstart = millis();
-      // get raw data
-      ESP_LOGI(TAG, "Taking snapshot...");
-      // use raw bmp image
-      hw_camera_raw_snapshot(bmp_buf, &width, &height);
-
-      elapsed_time = millis() - Tstart;
-      ESP_LOGI(TAG, "Snapshot taken (%d) width: %d, height: %d", elapsed_time, width, height);
-      print_memory();
-      // prepare feature
-      Tstart = millis();
-      ei::signal_t signal;
-      // generate feature
-      ei_prepare_feature(bmp_buf, &signal);
-      elapsed_time = millis() - Tstart;
-      ESP_LOGI(TAG, "Feature taken (%d)", elapsed_time);
-      print_memory();
-      // run classifier
-      Tstart = millis();
-      ei_impulse_result_t result = {0};
-      bool debug_nn = false;
-      // run classifier
-      run_classifier(&signal, &result, debug_nn);
-      elapsed_time = millis() - Tstart;
-      ESP_LOGI(TAG, "Classification done (%d)", elapsed_time);
-      print_memory();
-      ei_use_result(result);
-      press_state = true;
+      net_mqtt_publish(MQTT_EVT_TOPIC, "pressed");
     }
+  }
+  if (capture)
+  {
+    uint32_t Tstart, elapsed_time;
+    uint32_t width, height;
+
+    prev_millis = millis();
+    Tstart = millis();
+    // get raw data
+    ESP_LOGI(TAG, "Taking snapshot...");
+    // use raw bmp image
+    hw_camera_raw_snapshot(bmp_buf, &width, &height);
+
+    elapsed_time = millis() - Tstart;
+    ESP_LOGI(TAG, "Snapshot taken (%d) width: %d, height: %d", elapsed_time, width, height);
+    print_memory();
+    // prepare feature
+    Tstart = millis();
+    ei::signal_t signal;
+    // generate feature
+    ei_prepare_feature(bmp_buf, &signal);
+    elapsed_time = millis() - Tstart;
+    ESP_LOGI(TAG, "Feature taken (%d)", elapsed_time);
+    print_memory();
+    // run classifier
+    Tstart = millis();
+    ei_impulse_result_t result = {0};
+    bool debug_nn = false;
+    // run classifier
+    run_classifier(&signal, &result, debug_nn);
+    elapsed_time = millis() - Tstart;
+    ESP_LOGI(TAG, "Classification done (%d)", elapsed_time);
+    print_memory();
+    ei_use_result(result);
+    press_state = true;
   }
   else
   {
@@ -175,27 +178,16 @@ int ei_use_result(ei_impulse_result_t result)
       continue;
     }
     ESP_LOGI(TAG, "%s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
-    if (bb.label == "ubu")
-    {
-      label = 1;
-    }
-    if (bb.label == "spon")
-    {
-      label = 2;
-    }
+    evt_buf["label : "] = bb.label;
+    serializeJson(evt_buf, buf);
+    net_mqtt_publish(MQTT_EVT_TOPIC, buf);
+    Serial.println(bb.label);
   }
   if (!bb_found)
   {
-    label = 0;
-    ESP_LOGI(TAG, "No objects found");
+    ESP_LOGI(TAG, "not valid");
     return 0;
   }
-  evt_buf["label : "] = label;
-  serializeJson(evt_buf, buf);
-  net_mqtt_publish(MQTT_EVT_TOPIC, buf);
-  // net_mqtt_publish(MQTT_EVT_TOPIC, label);
-  Serial.println(label);
-  // Serial.println(buf);
   return 1;
 }
 
@@ -210,4 +202,12 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
   tmpbuf[length] = 0;
   // check if the message is for this device
   deserializeJson(cmd_buf, tmpbuf);
+  if (strcmp((char *)payload, "get") == 0)
+  {
+    capture = true;
+  }
+  else
+  {
+    capture = false;
+  }
 }
