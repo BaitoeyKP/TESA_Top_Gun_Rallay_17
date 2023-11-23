@@ -7,6 +7,7 @@
 #include <Problem_inferencing.h>
 #include "edge-impulse-sdk/dsp/image/image.hpp"
 
+
 // shared variables
 static uint8_t *bmp_buf;
 

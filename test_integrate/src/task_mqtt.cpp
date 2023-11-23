@@ -47,12 +47,8 @@ void task_mqtt_fcn(void *arg)
             evt_doc["pressed"] = evt_msg.pressed;
             serializeJson(evt_doc, evt_buf);
             break;
-        // แก้ด้วยยยยยยยยยยยยยยยยยยยยย
         case TASK_CAMERA_TYPE:
-            evt_doc["ID"] = MQTT_DEV_ID;
-            evt_doc["timestamp"] = evt_msg.timestamp;
-            evt_doc["pressed"] = evt_msg.pressed;
-            evt_doc["value"] = evt_msg.value;
+            evt_doc["ID"] = evt_msg.id;
             serializeJson(evt_doc, evt_buf);
             break;
         default:

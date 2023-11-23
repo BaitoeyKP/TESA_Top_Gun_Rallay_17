@@ -1,5 +1,5 @@
-#ifndef __TASK_PERIOD_H__
-#define __TASK_PERIOD_H__
+#ifndef __TASK_CAMERA_H__
+#define __TASK_CAMERA_H__
 
 // include files
 #include <Arduino.h>
@@ -12,4 +12,4 @@
 // public function prototypes
 void task_camera_init();
 
-#endif // __TASK_PERIOD_H__
+#endif // __TASK_CAMERA_H__

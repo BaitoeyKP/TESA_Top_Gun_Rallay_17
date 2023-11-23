@@ -57,12 +57,20 @@ int ei_use_result(ei_impulse_result_t result)
     bool bb_found = result.bounding_boxes[0].value > 0;
     for (size_t ix = 0; ix < result.bounding_boxes_count; ix++)
     {
-         bb = result.bounding_boxes[ix];
+        auto bb = result.bounding_boxes[ix];
         if (bb.value == 0)
         {
             continue;
         }
         ESP_LOGI(TAG, "%s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
+        // if (bb.label == "ubu")
+        // {
+        //     label = 0;
+        // }
+        // if (bb.label == "spon")
+        // {
+        //     label = 1;
+        // }
     }
     if (!bb_found)
     {

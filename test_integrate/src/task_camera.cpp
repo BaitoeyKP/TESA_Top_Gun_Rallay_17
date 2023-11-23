@@ -29,20 +29,20 @@ void task_camera_init()
 void task_camera_fcn(void *arg)
 {
     // task initialization
-    print_memory();
-    pinMode(BTN_PIN, INPUT_PULLUP);
-    hw_camera_init();
-    bmp_buf = (uint8_t *)ps_malloc(BMP_BUF_SIZE);
-    if (psramInit())
-    {
-        ESP_LOGI(TAG, "PSRAM initialized");
-    }
-    else
-    {
-        ESP_LOGE(TAG, "PSRAM not available");
-    }
     while (1)
     {
+        print_memory();
+        pinMode(BTN_PIN, INPUT_PULLUP);
+        hw_camera_init();
+        bmp_buf = (uint8_t *)ps_malloc(BMP_BUF_SIZE);
+        if (psramInit())
+        {
+            ESP_LOGI(TAG, "PSRAM initialized");
+        }
+        else
+        {
+            ESP_LOGE(TAG, "PSRAM not available");
+        }
         // task function
         evt_msg_t evt_msg = {
             .type = TASK_CAMERA_TYPE,
@@ -88,15 +88,8 @@ void task_camera_fcn(void *arg)
                 ei_use_result(result);
                 press_state = true;
             }
-            if (bb.label == "ubu")
-            {
-                evt_msg.id = 0;
-            }
-            if (bb.label == "spon")
-            {
-                evt_msg.id = 1;
-            }
-            xQueueSend(evt_queue, &evt_msg, portMAX_DELAY); // ส่งข้อมูลไป mqtt
+            // evt_msg.id = label;
+            // xQueueSend(evt_queue, &evt_msg, portMAX_DELAY); // ส่งข้อมูลไป mqtt
         }
         else
         {
@@ -105,9 +98,6 @@ void task_camera_fcn(void *arg)
                 press_state = false;
             }
         }
-
-        delay(100);
-
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
