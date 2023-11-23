@@ -21,7 +21,7 @@ void setup_wifi()
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);                  // เลือกโหมดรับ wifi
-  WiFi.begin(ssid);           // เชื่อมต่อ wifi
+  WiFi.begin(ssid, NULL);           // เชื่อมต่อ wifi
   while (WiFi.status() != WL_CONNECTED) // รอจนกว่าจะเชื่อมต่อwifiสำเร็จ
   {
     delay(500);

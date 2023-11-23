@@ -18,7 +18,7 @@ typedef void (*mqtt_callback_t)(char *, byte *, unsigned int);
 // shared variables
 
 // public functions
-void net_mqtt_init(char *ssid);
+void net_mqtt_init(char *ssid, char *passwd);
 void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_callback);
 void net_mqtt_publish(char *topic, char *payload);
 void net_mqtt_loop(void);

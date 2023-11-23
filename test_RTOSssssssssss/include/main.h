@@ -9,9 +9,9 @@
 #include <esp_log.h>
 
 // constants
-#define TASK_BUTTON_PRIO 4
-#define TASK_CAMERA_PRIO 3
-#define TASK_MQTT_PRIO 2
+#define TASK_BUTTON_PRIO 3
+#define TASK_CAMERA_PRIO 2
+#define TASK_MQTT_PRIO 4
 
 #define TASK_BUTTON_TYPE 0
 #define TASK_CAMERA_TYPE 1
@@ -35,7 +35,7 @@ typedef struct evt_msg_t
 // shared variables
 extern xQueueHandle evt_queue;
 extern bool enable_flag;
-// extern int label;
+extern int label;
 
 // public function prototypes
 

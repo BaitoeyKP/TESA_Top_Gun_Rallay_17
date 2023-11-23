@@ -30,9 +30,10 @@ void setup()
   pinMode(BTN_PIN, INPUT_PULLUP);
   // connect to WiFi
   // net_mqtt_init(WIFI_SSID, WIFI_PASSWORD);
-  net_mqtt_init(WIFI_SSID);
+  net_mqtt_init(WIFI_SSID, NULL);
   // connect to MQTT broker
   net_mqtt_connect(MQTT_DEV_ID, MQTT_CMD_TOPIC, mqtt_callback);
+  Serial.println("start");
 }
 
 // Main loop
@@ -41,21 +42,21 @@ void loop()
   static uint32_t prev_millis = 0;
 
   // check button status
-  if (digitalRead(BTN_PIN) == LOW)
-  {
-    // check button bounce
-    if (millis() - prev_millis > 1000)
-    {
-      Serial.println("pressed");
-      prev_millis = millis();
-      // publish button event
-      evt_buf["ID"] = MQTT_DEV_ID;
-      evt_buf["timestamp"] = millis();
-      evt_buf["pressed"] = true;
-      serializeJson(evt_buf, buf);
-      net_mqtt_publish(MQTT_EVT_TOPIC, buf);
-    }
-  }
+  // if (digitalRead(BTN_PIN) == LOW)
+  // {
+  //   // check button bounce
+  //   if (millis() - prev_millis > 1000)
+  //   {
+  Serial.println("pressed");
+  prev_millis = millis();
+  // publish button event
+  evt_buf["ID"] = MQTT_DEV_ID;
+  evt_buf["timestamp"] = millis();
+  evt_buf["pressed"] = true;
+  serializeJson(evt_buf, buf);
+  net_mqtt_publish(MQTT_EVT_TOPIC, buf);
+  //   }
+  // }
   // loop MQTT interval
   net_mqtt_loop();
   delay(100);
@@ -70,7 +71,7 @@ void print_memory()
   ESP_LOGI(TAG, "Free PSRAM: %d", ESP.getFreePsram());
 }
 
-// callback function to handle MQTT message
+// callback function to handle MQTT message 
 void mqtt_callback(char *topic, byte *payload, unsigned int length)
 {
   ESP_LOGI(TAG, "Message arrived on topic %s", topic);

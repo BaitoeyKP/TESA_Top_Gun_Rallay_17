@@ -41,7 +41,7 @@ void task_button_fcn(void *arg)
             if (millis() - prev_millis > 500)
             {
                 prev_millis = millis();
-                evt_msg.label = 5;
+                evt_msg.label = label;
                 xQueueSend(evt_queue, &evt_msg, portMAX_DELAY);
             }
         }

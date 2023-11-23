@@ -157,7 +157,7 @@ int ei_use_result(ei_impulse_result_t result)
     ESP_LOGI(TAG, "Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.)",
              result.timing.dsp, result.timing.classification, result.timing.anomaly);
     bool bb_found = result.bounding_boxes[0].value > 0;
-    int label;
+    // int label;
     for (size_t ix = 0; ix < result.bounding_boxes_count; ix++)
     {
         auto bb = result.bounding_boxes[ix];

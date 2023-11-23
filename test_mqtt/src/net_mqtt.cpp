@@ -13,17 +13,18 @@ static WiFiClient wifi_client;
 static PubSubClient mqtt_client(wifi_client);
 
 // connect WiFi and MQTT broker
-// void net_mqtt_init(char *ssid, char *passwd)
-void net_mqtt_init(char *ssid)
+void net_mqtt_init(char *ssid, char *passwd)
+// void net_mqtt_init(char *ssid)
 {
     // initialize WiFi
     WiFi.disconnect(true);
     WiFi.mode(WIFI_STA);
     // WiFi.begin(ssid, passwd);
-    WiFi.begin(ssid);
+    WiFi.begin(ssid, NULL);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(10);
+        ESP_LOGI(TAG, "Connecting to WiFi...");
     }
     ESP_LOGI(TAG, "Connected to %s", ssid);
 
