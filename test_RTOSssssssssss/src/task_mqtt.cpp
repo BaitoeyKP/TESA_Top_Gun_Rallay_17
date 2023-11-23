@@ -42,18 +42,14 @@ void task_mqtt_fcn(void *arg)
         switch (evt_msg.type)
         {
         case TASK_BUTTON_TYPE:
-            evt_doc["ID"] = MQTT_DEV_ID;
             evt_doc["timestamp"] = evt_msg.timestamp;
-            evt_doc["pressed"] = evt_msg.pressed;
+            evt_doc["label"] = evt_msg.label;
             serializeJson(evt_doc, evt_buf);
             break;
-        case TASK_PERIOD_TYPE:
-            evt_doc["ID"] = MQTT_DEV_ID;
-            evt_doc["timestamp"] = evt_msg.timestamp;
-            evt_doc["pressed"] = evt_msg.pressed;
-            evt_doc["value"] = evt_msg.value;
-            serializeJson(evt_doc, evt_buf);
-            break;
+        // case TASK_CAMERA_TYPE:
+        //     evt_doc["label"] = evt_msg.label;
+        //     serializeJson(evt_doc, evt_buf);
+        //     break;
         default:
             ESP_LOGW(TAG, "Unknown event type %d", evt_msg.type);
             evt_buf[0] = 0;
@@ -61,7 +57,7 @@ void task_mqtt_fcn(void *arg)
         }
         if (evt_buf[0] != 0)
         {
-            net_mqtt_publish(MQTT_EVT_TOPIC, evt_buf); // รับคำสั่งมาจาก mqtt
+            net_mqtt_publish(MQTT_EVT_TOPIC, evt_buf);
         }
     }
 }

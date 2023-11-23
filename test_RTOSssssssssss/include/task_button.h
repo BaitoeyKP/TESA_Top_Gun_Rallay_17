@@ -12,4 +12,4 @@
 // public function prototypes
 void task_button_init(void);
 
-#endif  // __TASK_BUTTON_H__
+#endif // __TASK_BUTTON_H__

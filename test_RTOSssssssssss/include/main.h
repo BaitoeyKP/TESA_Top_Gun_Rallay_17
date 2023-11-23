@@ -10,31 +10,32 @@
 
 // constants
 #define TASK_BUTTON_PRIO 4
-#define TASK_PERIOD_PRIO 3
+#define TASK_CAMERA_PRIO 3
 #define TASK_MQTT_PRIO 2
 
 #define TASK_BUTTON_TYPE 0
-#define TASK_PERIOD_TYPE 1
+#define TASK_CAMERA_TYPE 1
 
 #define WIFI_SSID "B"
 #define WIFI_PASSWORD "0123456789"
 #define MQTT_DEV_ID 22
-#define MQTT_EVT_TOPIC "tgr2023/Luvinas/evt"
-#define MQTT_CMD_TOPIC "tgr2023/Luvinas/cmd"
+#define MQTT_EVT_TOPIC "tgr2023/Luvinas/pub"
+#define MQTT_CMD_TOPIC "tgr2023/Luvinas/sub"
 
-// type definitions typeหลักต้องtypeตามนี้
+// type definitions
 typedef struct evt_msg_t
 {
-    int type; //ต้องมี
-    int id;
+    int type;
     uint32_t timestamp;
     bool pressed;
     uint32_t value;
+    int label;
 } evt_msg_t;
 
 // shared variables
 extern xQueueHandle evt_queue;
 extern bool enable_flag;
+// extern int label;
 
 // public function prototypes
 
