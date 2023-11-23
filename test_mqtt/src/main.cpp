@@ -5,8 +5,10 @@
 #define TAG "main"
 #define BTN_PIN 0
 #define WIFI_SSID "TGR17_2.4G"
+#define WIFI_PASSWORD NULL
+// #define WIFI_SSID "B"
 // #define WIFI_PASSWORD "0123456789"
-#define MQTT_EVT_TOPIC "TGR_22/pub"
+#define MQTT_EVT_TOPIC "TGR_22"
 #define MQTT_CMD_TOPIC "TGR_22/#"
 #define MQTT_DEV_ID 22
 
@@ -29,8 +31,7 @@ void setup()
   print_memory();
   pinMode(BTN_PIN, INPUT_PULLUP);
   // connect to WiFi
-  // net_mqtt_init(WIFI_SSID, WIFI_PASSWORD);
-  net_mqtt_init(WIFI_SSID, NULL);
+  net_mqtt_init(WIFI_SSID, WIFI_PASSWORD);
   // connect to MQTT broker
   net_mqtt_connect(MQTT_DEV_ID, MQTT_CMD_TOPIC, mqtt_callback);
   Serial.println("start");
@@ -55,6 +56,7 @@ void loop()
   evt_buf["pressed"] = true;
   serializeJson(evt_buf, buf);
   net_mqtt_publish(MQTT_EVT_TOPIC, buf);
+  net_mqtt_publish(MQTT_EVT_TOPIC, "sent!!!");
   //   }
   // }
   // loop MQTT interval
@@ -71,7 +73,7 @@ void print_memory()
   ESP_LOGI(TAG, "Free PSRAM: %d", ESP.getFreePsram());
 }
 
-// callback function to handle MQTT message 
+// callback function to handle MQTT message
 void mqtt_callback(char *topic, byte *payload, unsigned int length)
 {
   ESP_LOGI(TAG, "Message arrived on topic %s", topic);
