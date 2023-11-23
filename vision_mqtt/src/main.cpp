@@ -66,7 +66,7 @@ void loop()
 {
   static bool press_state = false;
   static uint32_t prev_millis = 0;
-
+  // mqtt_client.loop();
   if (digitalRead(BTN_PIN) == 0)
   {
     if ((millis() - prev_millis > 500) && (press_state == false))
@@ -108,6 +108,7 @@ void loop()
     print_memory();
     ei_use_result(result);
     press_state = true;
+    capture = false;
   }
   else
   {
@@ -116,6 +117,7 @@ void loop()
       press_state = false;
     }
   }
+  net_mqtt_loop();
   delay(100);
 }
 
@@ -196,12 +198,7 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
 {
   ESP_LOGI(TAG, "Message arrived on topic %s", topic);
   ESP_LOGI(TAG, "Payload: %.*s", length, payload);
-  // extract data from payload
-  char tmpbuf[128];
-  memcpy(tmpbuf, payload, length);
-  tmpbuf[length] = 0;
-  // check if the message is for this device
-  deserializeJson(cmd_buf, tmpbuf);
+  payload[length] = '\0';
   if (strcmp((char *)payload, "get") == 0)
   {
     capture = true;
@@ -211,3 +208,21 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length)
     capture = false;
   }
 }
+
+// (char *topic, byte *payload, unsigned int length)
+// {
+//   // extract data from payload
+//   char tmpbuf[128];
+//   memcpy(tmpbuf, payload, length);
+//   tmpbuf[length] = 0;
+//   // check if the message is for this device
+//   deserializeJson(cmd_buf, tmpbuf);
+//   if (strcmp((char *)payload, "get") == 0)
+//   {
+//     capture = true;
+//   }
+//   else
+//   {
+//     capture = false;
+//   }
+// }

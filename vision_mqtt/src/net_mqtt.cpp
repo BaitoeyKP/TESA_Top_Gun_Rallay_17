@@ -12,30 +12,30 @@ IPAddress subnet(255, 255, 0, 0);
 IPAddress local_IP(192, 168, 1, 73);
 IPAddress gateway(192, 168, 1, 2);
 
-
 // static variables
 static WiFiClient wifi_client;
 static PubSubClient mqtt_client(wifi_client);
 
 // connect WiFi and MQTT broker
 void net_mqtt_init(char *ssid, char *passwd)
-// void net_mqtt_init(char *ssid)
 {
     // initialize WiFi
-    if (!WiFi.config(local_IP, gateway, subnet)) {
-    Serial.println("STA Failed to configure");
-  }
-  
+    if (!WiFi.config(local_IP, gateway, subnet))
+    {
+        Serial.println("STA Failed to configure");
+    }
+
     WiFi.disconnect(true);
     WiFi.mode(WIFI_AP);
     WiFi.begin(ssid, passwd);
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(10);
-        ESP_LOGI(TAG, "Connecting to WiFi...");
+        Serial.println("Connecting to WiFi...");
+        // ESP_LOGI(TAG, "Connecting to WiFi...");
     }
     Serial.println("Connected to wifi");
-    ESP_LOGI(TAG, "Connected to %s", ssid);
+    // ESP_LOGI(TAG, "Connected to %s", ssid);
 
     // initialize MQTT
     mqtt_client.setServer(MQTT_BROKER, MQTT_PORT);
@@ -45,24 +45,26 @@ void net_mqtt_init(char *ssid, char *passwd)
 void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_callback)
 {
     String client_id = "tgr2023_" + String(dev_id);
-    //mqtt_client.setServer(gateway, 1883);
+    // mqtt_client.setServer(gateway, 1883);
     mqtt_client.setCallback(msg_callback);
-    
 
-    while(!mqtt_client.connected()){
-        if(mqtt_client.connect(client_id.c_str(),MQTT_USER,MQTT_PW)){
+    while (!mqtt_client.connected())
+    {
+        if (mqtt_client.connect(client_id.c_str(), MQTT_USER, MQTT_PW))
+        {
             Serial.println("Public EMQX MQTT broker connected");
             mqtt_client.subscribe(topic);
-        }else{
+        }
+        else
+        {
             Serial.print("failed with state ");
             Serial.print(mqtt_client.state());
             delay(2000);
         }
     }
-    //Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
-    //mqtt_client.connect(client_id.c_str());
-    //mqtt_client.subscribe(topic);
-    
+    // Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
+    // mqtt_client.connect(client_id.c_str());
+    // mqtt_client.subscribe(topic);
 }
 
 // publish message to topic
