@@ -53,7 +53,7 @@ void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_call
         if (mqtt_client.connect(client_id.c_str(), MQTT_USER, MQTT_PW))
         {
             // Serial.println("Public EMQX MQTT broker connected");
-            ESP_LOGI(TAG, "Public EMQX MQTT broker connected");
+            ESP_LOGI(TAG, "MQTT broker connected");
             mqtt_client.subscribe(topic);
         }
         else
@@ -61,7 +61,7 @@ void net_mqtt_connect(unsigned int dev_id, char *topic, mqtt_callback_t msg_call
             Serial.print("failed with state ");
             Serial.print(mqtt_client.state());
             delay(2000);
-        }
+        }                                                                                                                                                                                   
     }
     // Serial.printf("The client %s connects to the public MQTT broker\n", client_id.c_str());
     ESP_LOGI(TAG, "connect to mqtt broker");

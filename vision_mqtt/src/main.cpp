@@ -1,7 +1,7 @@
 #include "main.h"
 #include "hw_camera.h"
 #include "net_mqtt.h"
-
+#include "HTTPClient.h"
 // add header file of Edge Impulse firmware
 
 #include <topgunV1_inferencing.h>
@@ -12,7 +12,7 @@
 #define BTN_PIN 0
 #define WIFI_SSID "TGR17_2.4G"
 #define WIFI_PASSWORD NULL
-#define MQTT_EVT_TOPIC "TGR_22/water_level"
+#define MQTT_EVT_TOPIC "TGR_22/water_level_test"
 #define MQTT_CMD_TOPIC "TGR_22/#"
 #define MQTT_DEV_ID 22
 
@@ -46,14 +46,14 @@ void setup()
   pinMode(BTN_PIN, INPUT_PULLUP);
   hw_camera_init();
   bmp_buf = (uint8_t *)ps_malloc(BMP_BUF_SIZE);
-  if (psramInit())
-  {
-    ESP_LOGI(TAG, "PSRAM initialized");
-  }
-  else
-  {
-    ESP_LOGE(TAG, "PSRAM not available");
-  }
+  // if (psramInit())
+  // {
+  //   ESP_LOGI(TAG, "PSRAM initialized");
+  // }
+  // else
+  // {
+  //   ESP_LOGE(TAG, "PSRAM not available");
+  // }
   // connect to WiFi
   net_mqtt_init(WIFI_SSID, WIFI_PASSWORD);
   // connect to MQTT broker
@@ -67,16 +67,16 @@ void loop()
   static bool press_state = false;
   static uint32_t prev_millis = 0;
 
-  if (digitalRead(BTN_PIN) == 0)
+  // if (digitalRead(BTN_PIN) == 0)
+  // {
+  //   if ((millis() - prev_millis > 500) && (press_state == false))
+  //   {
+  //     net_mqtt_publish(MQTT_EVT_TOPIC, "pressed");
+  //   }
+  // }
+  if (capture || ((digitalRead(BTN_PIN) == 0) && (millis() - prev_millis > 500)))
   {
-    if ((millis() - prev_millis > 500) && (press_state == false))
-    {
-      net_mqtt_publish(MQTT_EVT_TOPIC, "pressed");
-    }
-  }
-  if (capture)
-  {
-    net_mqtt_publish(MQTT_EVT_TOPIC, "captured");
+    // net_mqtt_publish(MQTT_EVT_TOPIC, "captured");
     uint32_t Tstart, elapsed_time;
     uint32_t width, height;
 
@@ -181,16 +181,17 @@ int ei_use_result(ei_impulse_result_t result)
       continue;
     }
     ESP_LOGI(TAG, "%s (%f) [ x: %u, y: %u, width: %u, height: %u ]", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
-    evt_buf["label : "] = bb.label;
+    evt_buf["water level : "] = bb.label;
     serializeJson(evt_buf, buf);
     net_mqtt_publish(MQTT_EVT_TOPIC, buf);
+    Serial.print("water level : ");
     Serial.println(bb.label);
   }
   if (!bb_found)
   {
     ESP_LOGI(TAG, "not valid");
-    net_mqtt_publish(MQTT_EVT_TOPIC, "not found");
-
+    Serial.println("not valid");
+    // net_mqtt_publish(MQTT_EVT_TOPIC, "not found");
     return 0;
   }
   return 1;
